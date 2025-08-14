@@ -191,7 +191,8 @@ export class ChangelogDiffUtils {
 
     return {
       content: lines.join('\n'),
-      title
+      title,
+      isEmpty: !hasContent
     };
   }
 
@@ -249,8 +250,10 @@ export class ChangelogDiffUtils {
     
     const title = `Changelog Diff: ${repository.name} (${minVersion} to ${maxVersion})`;
     
+    const formattedDiff = this.formatMarkdownDiff(repository.name, combinedChanges, title, withDates);
+    
     return {
-      ...this.formatMarkdownDiff(repository.name, combinedChanges, title, withDates),
+      ...formattedDiff,
       fromVersion: minVersion,
       toVersion: maxVersion
     };

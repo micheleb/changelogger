@@ -71,6 +71,7 @@ export interface VersionChangesWithVersion {
 export interface MarkdownDiff {
   content: string;
   title: string;
+  isEmpty: boolean;
   fromVersion?: string;
   toVersion?: string;
 }

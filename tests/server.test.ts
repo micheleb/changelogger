@@ -125,11 +125,10 @@ describe('API Endpoints Integration Tests', () => {
     it('should return empty diff when no newer versions exist', async () => {
       const response = await simulateRequest('GET', '/repos/test-repo/since/2.1.0')
       
-      expect(response.status).toBe(200)
+      expect(response.status).toBe(204)
       
       const content = await response.text()
-      expect(content).toContain('# New updates!')
-      expect(content).toContain('No changes found in the specified version range.')
+      expect(content).toBe('')
     })
 
     it('should return 404 for non-existent repository', async () => {

@@ -250,6 +250,13 @@ export class ChangelogServer {
 
       const diff = await ChangelogDiffUtils.createSinceDiff(repository, sinceVersion, customTitle, this.config.withDates);
 
+      // Check if there are no changes
+      if (diff.isEmpty) {
+        return new Response(null, {
+          status: 204,
+        });
+      }
+
       return new Response(diff.content, {
         headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
       });

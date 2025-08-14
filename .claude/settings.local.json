@@ -6,6 +6,7 @@
       "Bash(bun run:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "defaultMode": "acceptEdits"
   }
 }

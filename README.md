@@ -229,6 +229,8 @@ Get the complete changelog in markdown format for a repository.
 
 **Content-Type:** `text/markdown; charset=utf-8`
 
+**Note:** Returns `204 No Content` if no changes are found.
+
 #### `GET /repos/:repo/since/:version`
 Get changelog differences in markdown format for all versions newer than the specified version.
 
@@ -263,6 +265,8 @@ Get changelog differences in markdown format for all versions newer than the spe
 ```
 
 **Content-Type:** `text/markdown; charset=utf-8`
+
+**Note:** Returns `204 No Content` if no changes are found since the specified version.
 
 **Example with custom title:**
 ```
