@@ -1,15 +1,40 @@
 # Changelogger
 
-A simple API server built with Bun that serves changelog data from repositories with Keep a Changelog formatted CHANGELOG.md files.
+Got multiple repos that you want to serve changelog updates for?
 
-## Features
+If your repositories follow the [Keep a Changelog](https://keepachangelog.com/) convention, here's all you need to do:
 
-- 🚀 Fast API server built with Bun
-- 📋 Parses Keep a Changelog format
-- 🔄 Dynamic repository configuration via environment variables
-- 📚 RESTful JSON API for accessing changelog data
-- ✅ Health checks and error handling
-- 🌐 CORS enabled for web applications
+1. **Check out your repos** on the same machine running this server
+2. **Add them to your .env** configuration
+3. **That's it** - your changelogs are now served via a clean REST API
+
+Want to keep them updated? Simply schedule a `git pull` for all your repos with a cron job and you're done. No manual work needed.
+
+Once running, your apps can get updates by calling:
+```
+GET your-domain/repos/my-project/since/1.2.0
+```
+
+Returns a markdown response like:
+```markdown
+# New updates!
+
+## Added
+- [2.1.0] Real-time notifications
+- [2.0.0] Complete UI redesign
+
+## Fixed
+- [2.1.0] Memory leak in data processing
+```
+
+## What You Get
+
+- 🚀 **Fast API server** built with Bun - serve multiple repo changelogs instantly
+- 📋 **Keep a Changelog parser** - works with the standard format out of the box
+- 🔄 **Dynamic configuration** - add/remove repos via environment variables
+- 📚 **RESTful JSON & Markdown APIs** - get structured data or formatted diffs
+- ⚡ **Optional SQLite caching** - 80% faster responses for high-traffic scenarios
+- ✅ **Zero maintenance** - just pull your repos and the server handles the rest
 
 ## Quick Start
 
@@ -392,6 +417,32 @@ changelogger/
 3. Restart the server
 
 The server will automatically validate and serve the new repository's changelog data.
+
+### Keeping Repositories Updated
+
+To keep your repositories up-to-date automatically, use the included `git_pull_cron_task.sh` script:
+
+```bash
+# Make the script executable (if not already)
+chmod +x git_pull_cron_task.sh
+
+# Run manually to test
+./git_pull_cron_task.sh
+
+# Set up a cron job (example: update every hour)
+# Edit your crontab with: crontab -e
+# Add this line to update repositories every hour:
+0 * * * * /path/to/changelogger/git_pull_cron_task.sh >> /var/log/changelogger-updates.log 2>&1
+
+# Or update every 15 minutes during business hours:
+*/15 9-17 * * 1-5 /path/to/changelogger/git_pull_cron_task.sh >> /var/log/changelogger-updates.log 2>&1
+```
+
+The script will:
+- Read your `.env` configuration to find all configured repositories
+- Attempt `git pull` on each repository in the configured base path
+- Provide detailed success/failure reporting
+- Exit with error code if any repositories failed to update
 
 ## Performance & Caching
 
