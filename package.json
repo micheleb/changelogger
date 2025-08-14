@@ -1,0 +1,24 @@
+{
+  "name": "changelogger",
+  "version": "1.0.0",
+  "description": "A simple API server to serve changelog data from Keep a Changelog formatted repositories",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "bun run --hot src/server.ts",
+    "start": "bun run src/server.ts",
+    "build": "bun build src/server.ts --outdir ./dist --target bun",
+    "typecheck": "bun --bun tsc --noEmit",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
+  },
+  "keywords": ["changelog", "api", "bun", "keepachangelog"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
