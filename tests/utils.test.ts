@@ -114,7 +114,7 @@ describe('VersionUtils', () => {
 describe('ChangelogDiffUtils', () => {
   const mockRepository: Repository = {
     name: 'test-repo',
-    path: './test-repo',
+    path: './non-existent-repo',
     versions: [
       {
         version: '2.1.0',
@@ -195,18 +195,18 @@ describe('ChangelogDiffUtils', () => {
       
       expect(result.added).toHaveLength(2)
       expect(result.added).toEqual([
-        { description: 'Real-time notifications', version: '2.1.0' },
-        { description: 'UI redesign', version: '2.0.0' }
+        { description: 'Real-time notifications', version: '2.1.0', date: '2024-01-15' },
+        { description: 'UI redesign', version: '2.0.0', date: '2023-12-01' }
       ])
       
       expect(result.fixed).toHaveLength(1)
       expect(result.fixed).toEqual([
-        { description: 'Memory leak fix', version: '2.1.0' }
+        { description: 'Memory leak fix', version: '2.1.0', date: '2024-01-15' }
       ])
       
       expect(result.changed).toHaveLength(1)
       expect(result.changed).toEqual([
-        { description: 'API changes', version: '2.0.0' }
+        { description: 'API changes', version: '2.0.0', date: '2023-12-01' }
       ])
     })
   })

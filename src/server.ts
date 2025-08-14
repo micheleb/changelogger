@@ -7,6 +7,7 @@ interface Config {
   port: number;
   repos: string[];
   reposBasePath: string;
+  withDates: boolean;
 }
 
 export class ChangelogServer {
@@ -25,12 +26,13 @@ export class ChangelogServer {
       .filter(repo => repo.length > 0);
     
     const reposBasePath = process.env.REPOS_BASE_PATH || '.';
+    const withDates = process.env.WITH_DATES?.toLowerCase() === 'true';
 
     if (repos.length === 0) {
       console.warn('Warning: No repositories configured in REPOS environment variable');
     }
 
-    return { port, repos, reposBasePath };
+    return { port, repos, reposBasePath, withDates };
   }
 
   private createResponse<T>(data: T): ApiResult<T> {
@@ -246,7 +248,7 @@ export class ChangelogServer {
         }
       }
 
-      const diff = await ChangelogDiffUtils.createSinceDiff(repository, sinceVersion, customTitle);
+      const diff = await ChangelogDiffUtils.createSinceDiff(repository, sinceVersion, customTitle, this.config.withDates);
 
       return new Response(diff.content, {
         headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
@@ -326,7 +328,7 @@ export class ChangelogServer {
         });
       }
 
-      const diff = await ChangelogDiffUtils.createRangeDiff(repository, version1, version2);
+      const diff = await ChangelogDiffUtils.createRangeDiff(repository, version1, version2, this.config.withDates);
 
       return new Response(diff.content, {
         headers: { 'Content-Type': 'text/markdown; charset=utf-8' },

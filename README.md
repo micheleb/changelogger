@@ -27,6 +27,18 @@ Returns a markdown response like:
 - [2.1.0] Memory leak in data processing
 ```
 
+With `WITH_DATES=true`:
+```markdown
+# New updates!
+
+## Added
+- [2.1.0] (Apr 25, 2025) Real-time notifications
+- [2.0.0] (Mar 15, 2025) Complete UI redesign
+
+## Fixed
+- [2.1.0] (Apr 25, 2025) Memory leak in data processing
+```
+
 ## What You Get
 
 - 🚀 **Fast API server** built with Bun - serve multiple repo changelogs instantly
@@ -409,6 +421,7 @@ changelogger/
 - `SQLITE_CACHE`: Enable/disable SQLite caching (default: false)
 - `SQLITE_CACHE_DB_PATH`: Path to SQLite cache database (default: ./cache.db)
 - `SQLITE_CACHE_TTL_HOURS`: Cache TTL in hours (default: 168 = 7 days)
+- `WITH_DATES`: Include release dates in markdown output (default: false)
 
 ### Adding New Repositories
 
@@ -417,6 +430,22 @@ changelogger/
 3. Restart the server
 
 The server will automatically validate and serve the new repository's changelog data.
+
+### Date Display Configuration
+
+By default, changelog entries show only version numbers:
+```markdown
+- [2.1.0] Real-time notifications
+- [2.0.0] Complete UI redesign
+```
+
+Enable `WITH_DATES=true` in your `.env` to include release dates in a readable format:
+```markdown
+- [2.1.0] (Apr 25, 2025) Real-time notifications  
+- [2.0.0] (Mar 15, 2025) Complete UI redesign
+```
+
+Dates are formatted as "MMM DD, YYYY" (e.g., "Apr 25, 2025") and only shown when available in the changelog. This feature works with all markdown endpoints (`/since`, `/since/:version`, `/diff/:v1/:v2`).
 
 ### Keeping Repositories Updated
 

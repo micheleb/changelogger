@@ -56,6 +56,7 @@ export type ApiResult<T> = SuccessResponse<T> | ErrorResponse;
 export interface ChangelogEntryWithVersion {
   description: string;
   version: string;
+  date?: string;
 }
 
 export interface VersionChangesWithVersion {

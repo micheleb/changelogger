@@ -62,6 +62,36 @@ export class TitleUtils {
   }
 }
 
+export class DateUtils {
+  static formatShortDate(dateString?: string): string {
+    if (!dateString) {
+      return '';
+    }
+    
+    try {
+      const date = new Date(dateString);
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        return '';
+      }
+      
+      const monthNames = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      
+      const month = monthNames[date.getMonth()];
+      const day = date.getDate();
+      const year = date.getFullYear();
+      
+      return `${month} ${day}, ${year}`;
+    } catch (error) {
+      return '';
+    }
+  }
+}
+
 export class ChangelogDiffUtils {
   static filterVersionsSince(repository: Repository, sinceVersion: string | null): Version[] {
     // If no version specified, return all versions (entire changelog)
@@ -94,7 +124,8 @@ export class ChangelogDiffUtils {
           for (const entry of sectionChanges) {
             entries.push({
               description: entry.description,
-              version: version.version
+              version: version.version,
+              date: version.date
             });
           }
         }
@@ -111,7 +142,8 @@ export class ChangelogDiffUtils {
   static formatMarkdownDiff(
     repoName: string,
     changes: VersionChangesWithVersion,
-    title: string
+    title: string,
+    withDates: boolean = false
   ): MarkdownDiff {
     const lines: string[] = [];
     lines.push(`# ${title}`);
@@ -136,7 +168,17 @@ export class ChangelogDiffUtils {
         lines.push('');
         
         for (const entry of sectionChanges) {
-          lines.push(`- [${entry.version}] ${entry.description}`);
+          let entryLine = `- [${entry.version}]`;
+          
+          if (withDates && entry.date) {
+            const formattedDate = DateUtils.formatShortDate(entry.date);
+            if (formattedDate) {
+              entryLine += ` (${formattedDate})`;
+            }
+          }
+          
+          entryLine += ` ${entry.description}`;
+          lines.push(entryLine);
         }
         lines.push('');
       }
@@ -153,7 +195,7 @@ export class ChangelogDiffUtils {
     };
   }
 
-  static async createSinceDiff(repository: Repository, sinceVersion: string | null, customTitle?: string): Promise<MarkdownDiff> {
+  static async createSinceDiff(repository: Repository, sinceVersion: string | null, customTitle?: string, withDates: boolean = false): Promise<MarkdownDiff> {
     const cacheKey = sinceVersion || 'complete';
     const operation = 'since';
     
@@ -184,10 +226,10 @@ export class ChangelogDiffUtils {
       }
     }
     
-    return this.formatMarkdownDiff(repository.name, combinedChanges, title);
+    return this.formatMarkdownDiff(repository.name, combinedChanges, title, withDates);
   }
 
-  static async createRangeDiff(repository: Repository, version1: string, version2: string): Promise<MarkdownDiff> {
+  static async createRangeDiff(repository: Repository, version1: string, version2: string, withDates: boolean = false): Promise<MarkdownDiff> {
     const minVersion = VersionUtils.compareVersions(version1, version2) <= 0 ? version1 : version2;
     const maxVersion = VersionUtils.compareVersions(version1, version2) <= 0 ? version2 : version1;
     const cacheKey = `${minVersion}_${maxVersion}`;
@@ -208,7 +250,7 @@ export class ChangelogDiffUtils {
     const title = `Changelog Diff: ${repository.name} (${minVersion} to ${maxVersion})`;
     
     return {
-      ...this.formatMarkdownDiff(repository.name, combinedChanges, title),
+      ...this.formatMarkdownDiff(repository.name, combinedChanges, title, withDates),
       fromVersion: minVersion,
       toVersion: maxVersion
     };

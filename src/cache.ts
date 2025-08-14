@@ -81,7 +81,7 @@ export class CacheManager {
 
       const key = this.generateCacheKey(repo, fileMtime, operation, params);
       
-      const stmt = this.db.prepare<CacheEntry>('SELECT * FROM cache_entries WHERE key = ?');
+      const stmt = this.db.prepare('SELECT * FROM cache_entries WHERE key = ?');
       const entry = stmt.get(key) as CacheEntry | undefined;
       
       if (!entry) {
