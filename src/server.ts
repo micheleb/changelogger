@@ -233,21 +233,6 @@ export class ChangelogServer {
       const parser = new ChangelogParser(repoName, this.config.reposBasePath);
       const repository = parser.parseChangelog();
 
-      // Only validate version exists if one was provided
-      if (sinceVersion && sinceVersion.trim() !== '') {
-        const baseVersionExists = ChangelogDiffUtils.findVersionInRepository(repository, sinceVersion);
-        if (!baseVersionExists) {
-          const errorResponse = this.createErrorResponse(
-            `Base version '${sinceVersion}' not found in repository '${repoName}'`,
-            'VERSION_NOT_FOUND'
-          );
-          return new Response(JSON.stringify(errorResponse), {
-            status: 404,
-            headers: { 'Content-Type': 'application/json' },
-          });
-        }
-      }
-
       const diff = await ChangelogDiffUtils.createSinceDiff(repository, sinceVersion, customTitle, this.config.withDates);
 
       // Check if there are no changes

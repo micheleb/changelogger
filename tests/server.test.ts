@@ -142,15 +142,28 @@ describe('API Endpoints Integration Tests', () => {
       expect(json.code).toBe('REPO_NOT_CONFIGURED')
     })
 
-    it('should return 404 for non-existent version', async () => {
+    it('should return 204 when non-existent version is higher than all available versions', async () => {
       const response = await simulateRequest('GET', '/repos/test-repo/since/99.0.0')
       
-      expect(response.status).toBe(404)
-      expect(response.headers.get('content-type')).toBe('application/json')
+      expect(response.status).toBe(204)
       
-      const json = await response.json()
-      expect(json.success).toBe(false)
-      expect(json.code).toBe('VERSION_NOT_FOUND')
+      const content = await response.text()
+      expect(content).toBe('')
+    })
+
+    it('should return updates from next available version when requested version does not exist', async () => {
+      // Request since 1.5.1 (doesn't exist), should get updates from 1.5.2, 2.0.0, 2.1.0
+      const response = await simulateRequest('GET', '/repos/test-repo/since/1.5.1')
+      
+      expect(response.status).toBe(200)
+      expect(response.headers.get('content-type')).toBe('text/markdown; charset=utf-8')
+      
+      const content = await response.text()
+      expect(content).toContain('# New updates!')
+      expect(content).toContain('- [1.5.2]') // Should include 1.5.2
+      expect(content).toContain('- [2.0.0]') // Should include 2.0.0  
+      expect(content).toContain('- [2.1.0]') // Should include 2.1.0
+      expect(content).not.toContain('- [1.0.0]') // Should NOT include 1.0.0
     })
   })
 
